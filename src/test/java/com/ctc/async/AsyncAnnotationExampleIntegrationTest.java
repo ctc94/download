@@ -1,37 +1,33 @@
 package com.ctc.async;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.function.BiFunction;
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import com.ctc.async.config.SpringAsyncConfig;
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { SpringAsyncConfig.class }, loader = AnnotationConfigContextLoader.class)
+@SpringBootTest
 public class AsyncAnnotationExampleIntegrationTest {
 
     @Autowired
-    private AsyncComponent asyncAnnotationExample;
+    private AsyncComponent asyncComponent;
 
     // tests
 
     @Test
     public void testAsyncAnnotationForMethodsWithVoidReturnType() {
         System.out.println("Start - invoking an asynchronous method. " + Thread.currentThread().getName());
-        asyncAnnotationExample.asyncMethodWithVoidReturnType();
+        asyncComponent.asyncMethodWithVoidReturnType();
         System.out.println("End - invoking an asynchronous method. ");
     }
 
     @Test
     public void testAsyncAnnotationForMethodsWithReturnType() throws InterruptedException, ExecutionException {
         System.out.println("Start - invoking an asynchronous method. " + Thread.currentThread().getName());
-        final Future<String> future = asyncAnnotationExample.asyncMethodWithReturnType();
+        final Future<String> future = asyncComponent.asyncMethodWithReturnType();
 
         while (true) {
             if (future.isDone()) {
@@ -46,15 +42,19 @@ public class AsyncAnnotationExampleIntegrationTest {
     @Test
     public void testAsyncAnnotationForMethodsWithConfiguredExecutor() {
         System.out.println("Start - invoking an asynchronous method. ");
-        asyncAnnotationExample.asyncMethodWithConfiguredExecutor();
+        asyncComponent.asyncMethodWithConfiguredExecutor();
         System.out.println("End - invoking an asynchronous method. ");
     }
 
     @Test
     public void testAsyncAnnotationForMethodsWithException() throws Exception {
         System.out.println("Start - invoking an asynchronous method. ");
-        asyncAnnotationExample.asyncMethodWithExceptions();
-        System.out.println("End - invoking an asynchronous method. ");
+        //asyncComponent.asyncMethodWithExceptions();
+        String url = "c:/Users/mir94/OneDrive/정리문서/bybit데이터/index_price/backup/BTCUSD2020-10-01_index_price.csv";
+		asyncComponent.asyncDownloadUrl(url, "BTCUSD2020-10-01_index_price.csv");
+		Thread.sleep(10000);
+		System.out.println("End - invoking an asynchronous method. ");
+        
     }
 
 }

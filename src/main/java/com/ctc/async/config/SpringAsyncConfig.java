@@ -15,7 +15,6 @@ import com.ctc.async.CustomAsyncExceptionHandler;
 
 @Configuration
 @EnableAsync()
-@ComponentScan("com.ctc.async")
 public class SpringAsyncConfig implements AsyncConfigurer {
 
     @Bean(name = "threadPoolTaskExecutor")

@@ -1,4 +1,4 @@
-package com.ctc.download;
+package com.ctc;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,32 +12,60 @@ import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
+
+import com.ctc.async.AsyncComponent;
 
 @SpringBootApplication
+@EnableScheduling
 public class SpringBootApp {
 	private static final Logger log = LoggerFactory.getLogger(SpringBootApp.class);
 
 	public static void main(String[] args) throws InterruptedException {
 		SpringApplication.run(SpringBootApp.class, args);
 	}
+	
+	@Autowired
+    private AsyncComponent asyncComponent;
 
-	// private Gson gson = new Gson();
-
-	@Bean
-	public CommandLineRunner completableFuture() {
+	//@Bean
+	public CommandLineRunner completableFuture() throws Exception {
+		
 		return (args) -> {
-
-			CompletableFuture<String> completableFuture = CompletableFuture.completedFuture("aaaa");
-
-			completableFuture.thenAccept((s) -> {
-				System.out.println("return : " + s);
+			CompletableFuture<String> completableFuture = null;
+			String url = "https://public.bybit.com/trading/BTCUSD/BTCUSD2019-10-01.csv.gz";
+			completableFuture = asyncComponent.asyncDownloadUrl(url, "BTCUSD2019-10-01.csv.gz");
+			
+			completableFuture.thenAccept((filename) -> {
+				
+				if(filename == null) {
+					System.out.println("file download failed : " + filename);
+				} else {
+					System.out.println("file download success : " + filename);
+				}
 			});
+			
+			url = "https://public.bybit.com/trading/BTCUSD/BTCUSD2019-10-02.csv.gz";
+			completableFuture = asyncComponent.asyncDownloadUrl(url, "BTCUSD2019-10-02.csv.gz");
+			
+			completableFuture.thenAccept((filename) -> {
+				
+				if(filename == null) {
+					System.out.println("file download failed : " + filename);
+				} else {
+					System.out.println("file download success : " + filename);
+				}
+			});
+			
+			Thread.sleep(5000);
 
 		};
+		
+		
 	}
 
 	// @Bean
