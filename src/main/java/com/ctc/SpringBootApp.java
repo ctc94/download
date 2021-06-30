@@ -7,7 +7,9 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.Consumer;
 
 import org.slf4j.Logger;
@@ -16,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.ctc.async.AsyncComponent;
 
@@ -28,44 +32,56 @@ public class SpringBootApp {
 	public static void main(String[] args) throws InterruptedException {
 		SpringApplication.run(SpringBootApp.class, args);
 	}
-	
-	@Autowired
-    private AsyncComponent asyncComponent;
 
-	//@Bean
+	@Bean
+	public ThreadPoolTaskExecutor taskExecutor() {
+		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+		taskExecutor.setCorePoolSize(5);
+		taskExecutor.setMaxPoolSize(50);
+		taskExecutor.setQueueCapacity(0);
+		taskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+		taskExecutor.setAwaitTerminationSeconds(20);
+		taskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+		taskExecutor.initialize();
+		return taskExecutor;
+	}
+
+	@Autowired
+	private AsyncComponent asyncComponent;
+
+	// @Bean
 	public CommandLineRunner completableFuture() throws Exception {
-		
+
 		return (args) -> {
 			CompletableFuture<String> completableFuture = null;
 			String url = "https://public.bybit.com/trading/BTCUSD/BTCUSD2019-10-01.csv.gz";
 			completableFuture = asyncComponent.asyncDownloadUrl(url, "BTCUSD2019-10-01.csv.gz");
-			
+
 			completableFuture.thenAccept((filename) -> {
-				
-				if(filename == null) {
+
+				if (filename == null) {
 					System.out.println("file download failed : " + filename);
 				} else {
 					System.out.println("file download success : " + filename);
 				}
 			});
-			
+
 			url = "https://public.bybit.com/trading/BTCUSD/BTCUSD2019-10-02.csv.gz";
 			completableFuture = asyncComponent.asyncDownloadUrl(url, "BTCUSD2019-10-02.csv.gz");
-			
+
 			completableFuture.thenAccept((filename) -> {
-				
-				if(filename == null) {
+
+				if (filename == null) {
 					System.out.println("file download failed : " + filename);
 				} else {
 					System.out.println("file download success : " + filename);
 				}
 			});
-			
+
 			Thread.sleep(5000);
 
 		};
-		
-		
+
 	}
 
 	// @Bean
@@ -95,7 +111,7 @@ public class SpringBootApp {
 
 		};
 	}
-	
+
 	private static class StreamGobbler implements Runnable {
 		private String[] command;
 		private Consumer<String> consumer;

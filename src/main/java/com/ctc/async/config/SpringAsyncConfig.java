@@ -4,7 +4,6 @@ import java.util.concurrent.Executor;
 
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
@@ -18,13 +17,18 @@ import com.ctc.async.CustomAsyncExceptionHandler;
 public class SpringAsyncConfig implements AsyncConfigurer {
 
     @Bean(name = "threadPoolTaskExecutor")
-    public Executor threadPoolTaskExecutor() {
-        return new ThreadPoolTaskExecutor();
+    public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
+    	ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+//        taskExecutor.setCorePoolSize(5);
+//        taskExecutor.setMaxPoolSize(10);
+//        taskExecutor.setQueueCapacity(10);
+//        taskExecutor.afterPropertiesSet();
+        return taskExecutor;
     }
 
     @Override
-    public Executor getAsyncExecutor() {
-        return new SimpleAsyncTaskExecutor();
+    public SimpleAsyncTaskExecutor getAsyncExecutor() {
+    	return new SimpleAsyncTaskExecutor();
     }
 
     @Override

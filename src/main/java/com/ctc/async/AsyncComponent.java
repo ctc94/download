@@ -2,8 +2,11 @@ package com.ctc.async;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import com.ctc.download.util.FileDownload;
@@ -11,11 +14,13 @@ import com.ctc.download.util.FileDownload;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
 @Component
 public class AsyncComponent {
 	private static final Logger log = LoggerFactory.getLogger(AsyncComponent.class);
+
 
 	/**
 	 * CompletableFuture를 이용한 비동기 구현

@@ -1,4 +1,5 @@
 push-git.sh
+backup/
 bin/
 .settings/
 target/

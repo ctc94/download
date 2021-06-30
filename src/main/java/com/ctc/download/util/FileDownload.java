@@ -50,7 +50,7 @@ public class FileDownload {
 	}
 
 	public static void downloadWithJavaNIO(String fileURL, String localFilename) throws IOException {
-		log.info("downloadWithJavaNIO start :" + fileURL);
+		//log.info("downloadWithJavaNIO start :" + fileURL);
 		URL url = new URL(fileURL);
 
 		try (ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
@@ -59,7 +59,7 @@ public class FileDownload {
 			fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
 			fileOutputStream.close();
 		}
-		log.info("downloadWithJavaNIO :" + fileURL);
+		//log.info("downloadWithJavaNIO end :" + fileURL);
 	}
 
 	/*
