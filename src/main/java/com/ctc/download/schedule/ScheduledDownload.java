@@ -28,12 +28,9 @@ public class ScheduledDownload {
 	@Scheduled(fixedRate = 36000000)
 	@LogExecutionTime
 	public void downloadFile() throws InterruptedException, ExecutionException {
-		
-		log.info("downloadFile schedule start");
-		String endDate = "2019-10-10";// DateUtil.AddDay(DateUtil.now("yyyy-MM-dd"), -1, "yyyy-MM-dd");
+		String endDate = DateUtil.AddDay(DateUtil.now("yyyy-MM-dd"), -1, "yyyy-MM-dd");
 		String startDate = "2019-09-30";
 
-		
 		List<CompletableFuture<Void>> list = new ArrayList<CompletableFuture<Void>>();
 
 		while (!endDate.equals(startDate)) {
@@ -56,7 +53,7 @@ public class ScheduledDownload {
 //					ObjectMapper mapper = new ObjectMapper();
 					int[] line = { 0 };
 					GzipReader.readGzip_BufferedReader(filename).forEach(m -> {
-						log.info(++line[0] + ":" + m.toString());
+						//log.info(filename+":"+(++line[0]) + ":" + m.toString());
 					});
 
 					// 비동기 각각 걸리는 시간 체크
@@ -75,14 +72,11 @@ public class ScheduledDownload {
 			);
 
 		} // while end
-		
+
 		// 비동기 전체 함수 걸리는 시간 체크하기 위한 로직
 		@SuppressWarnings("unchecked")
 		CompletableFuture<Void>[] array = list.stream().toArray(CompletableFuture[]::new);
 		CompletableFuture.allOf(array).join();
-
-		log.info("downloadFile schedule end");
-
 	}
 
 }

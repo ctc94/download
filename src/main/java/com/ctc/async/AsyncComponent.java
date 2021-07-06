@@ -9,8 +9,10 @@ import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
@@ -31,6 +33,9 @@ public class AsyncComponent {
 		stopWatch.start(task);
 		this.stopWatchMap.put(task, stopWatch);
 	}
+	
+	@Autowired
+	ThreadPoolTaskExecutor taskExecutor;
 
 	/**
 	 * CompletableFuture를 이용한 비동기 구현
@@ -40,18 +45,20 @@ public class AsyncComponent {
 	 * @return
 	 */
 	public CompletableFuture<String> asyncDownloadUrl(String url, String localFilename) {
-		this.start(url);
+		
 		return CompletableFuture.supplyAsync(() -> {
+			this.start(url);			
 			try {
 				FileDownload.downloadWithJavaNIO(url, localFilename);
 			} catch (IOException e) {
 				throw new CompletionException(e);
 			}
 			return localFilename;
-		}).exceptionally((ex) -> {
+		},taskExecutor).exceptionally((ex) -> {
 			log.error(ex.getMessage());
 			return null;
 		});
+		
 	}
 
 	@Async

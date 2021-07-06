@@ -46,14 +46,17 @@ public class SpringBootApp {
 	@Bean
 	public ThreadPoolTaskExecutor taskExecutor() {
 		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-		taskExecutor.setCorePoolSize(5);
-		taskExecutor.setMaxPoolSize(50);
-		taskExecutor.setQueueCapacity(0);
+		taskExecutor.setCorePoolSize(31);
+		taskExecutor.setMaxPoolSize(100);
+		
+		//taskExecutor.setQueueCapacity(31);		
 		taskExecutor.setWaitForTasksToCompleteOnShutdown(true);
-		taskExecutor.setAwaitTerminationSeconds(20);
+		taskExecutor.setAwaitTerminationSeconds(10);
 		taskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
 		taskExecutor.initialize();
+		
 		return taskExecutor;
+		
 	}
 
 	@Autowired
