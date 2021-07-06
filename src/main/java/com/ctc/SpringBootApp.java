@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.Consumer;
@@ -19,6 +18,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -26,7 +26,17 @@ import com.ctc.async.AsyncComponent;
 
 @SpringBootApplication
 @EnableScheduling
-public class SpringBootApp {
+@EnableAsync()
+public class SpringBootApp { 
+
+	
+	// implements CommandLineRunner {
+	
+	//@Override
+	//public void run(String... arg0) throws Exception {
+		//TODO
+	//}
+
 	private static final Logger log = LoggerFactory.getLogger(SpringBootApp.class);
 
 	public static void main(String[] args) throws InterruptedException {

@@ -41,6 +41,7 @@ public class GzipReader {
 					ret.add(m);
 				} 
 			}
+			in.close();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

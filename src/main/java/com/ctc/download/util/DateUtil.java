@@ -7,6 +7,13 @@ import java.util.Date;
 
 public class DateUtil {
 	
+	public static String AddDay(String strDate, int day,String format) {
+		return AddDate(strDate,0,0,day,format);
+	}	
+	public static String AddDay(String strDate, int day) {
+		return AddDate(strDate,0,0,day,"yyyyMMdd");
+	}
+	
 	public static String AddDate(String strDate, int year, int month, int day) {
 		return AddDate(strDate,year,month,day,"yyyyMMdd");
 	}
