@@ -15,8 +15,11 @@ public class LogAspect {
 	//@Around("execution(* * com.test.aop.controller.*(..))")
 	@Around("@annotation(LogExecutionTime)")
 	public Object executionAspect(ProceedingJoinPoint joinPoint) throws Throwable {
-		
 		String method = joinPoint.getSignature().getName();
+		log.info("===============================================");
+		log.info("LogExecutionTime check method=" + method+ " start");
+		log.info("===============================================");
+		
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start(method);
 
@@ -24,7 +27,9 @@ public class LogAspect {
 		
 		stopWatch.stop();
 		log.info(stopWatch.prettyPrint()+"MS :"+stopWatch.getTotalTimeMillis()+"\nS:"+stopWatch.getTotalTimeSeconds());
-
+		log.info("===============================================");
+		log.info("LogExecutionTime check method=" + method+ " end");
+		log.info("===============================================");
 		return result;
 	}
 }
