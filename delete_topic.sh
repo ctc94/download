@@ -5,4 +5,4 @@ if [ "" = "$topic" ]; then
 fi
 echo "${topic}"
 cd /data/kafka/kafka_2.13-2.8.0
-bin/kafka-topics.sh --create --topic ${topic} --bootstrap-server kafka:9092
+bin/kafka-topics.sh --delete --topic ${topic} --bootstrap-server kafka:9092

@@ -10,10 +10,10 @@ import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
-
 import com.ctc.async.AsyncComponent;
 import com.ctc.async.config.LogExecutionTime;
 import com.ctc.download.util.DateUtil;
@@ -26,8 +26,11 @@ public class ScheduledDownload {
 	private static final Logger log = LoggerFactory.getLogger(ScheduledDownload.class);
 	@Autowired
 	private AsyncComponent asyncComponent;
+	
+	@Autowired
+	private KafkaTemplate<String, Object> template;
 
-	@Scheduled(fixedRate = 36000000)
+	//@Scheduled(fixedRate = 36000000)
 	@LogExecutionTime
 	public void readFiles() throws IOException {
 		String dir = "./backup/spot_index/BTCUSD/";
@@ -40,9 +43,12 @@ public class ScheduledDownload {
 				int[] line = { 0 };
 				GzipReader.readGzip_BufferedReader(dir + filename).forEach(m -> {
 					++line[0];
-					//log.info(filename + ":" + (++line[0]) + ":" + m.toString());
+					//log.info(filename + ":" + (++line[0]) + ":" + m.toString());					
+					this.template.send("BTCUSD-index-price",m.get("startAt"), m);
 				});
+				
 				log.info(filename +" file line  count:" + (line[0]));
+				
 				return filename;
 			}
 
@@ -80,11 +86,10 @@ public class ScheduledDownload {
 					log.info("file download failed : " + filename);
 				} else {
 					log.info("file download success : " + filename);
-//					ObjectMapper mapper = new ObjectMapper();
-					//int[] line = { 0 };
-					//GzipReader.readGzip_BufferedReader(filename).forEach(m -> {
-						// log.info(filename+":"+(++line[0]) + ":" + m.toString());
-					//});
+
+					GzipReader.readGzip_BufferedReader(filename).forEach(m -> {
+						this.template.send("BTCUSD-index-price",m.get("startAt"), m);
+					});
 
 					// 비동기 각각 걸리는 시간 체크
 					StopWatch stopWatch = asyncComponent.getStopWatch(url);

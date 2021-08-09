@@ -17,3 +17,5 @@ buildNumber.properties
 #.mvn/
 .classpath
 .vault_pass
+.api
+.git-token
